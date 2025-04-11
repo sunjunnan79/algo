@@ -24,38 +24,45 @@ func main() {
 	}
 }
 
+// 反转k个节点的链表
 func reverseKGroup(head *ListNode, k int) *ListNode {
+	// 创建一个哨兵节点
+	dummy := &ListNode{Next: head}
+	pre := dummy
+	cur := head
 
-	var list []*ListNode
-	var last = &ListNode{}
-	var final = last
-	var next = head
+	for {
 
-	for next != nil {
-		list = append(list, next)
-		next = next.Next
-		if len(list) == k {
-
-			//指向上一个
-			for i := k - 1; i-1 >= 0; i-- {
-				list[i].Next = list[i-1]
-			}
-
-			//上一次的末尾指针要指向当前的指针
-			last.Next = list[k-1]
-			list[0].Next = next
-
-			//存储到上次的记录去
-			last = list[0]
-
-			//清除list
-			list = list[:0]
-
+		// 检查剩余长度是否大于等于 k,每次获取k个
+		count := 0
+		temp := cur
+		for temp != nil && count < k {
+			temp = temp.Next
+			count++
+		}
+		if count < k {
+			break
 		}
 
+		// 反转 k 个节点
+		var prev *ListNode
+		tail := cur
+		for i := 0; i < k; i++ {
+			next := cur.Next
+			cur.Next = prev
+			prev = cur
+			cur = next
+		}
+
+		// 连接反转后的部分
+		pre.Next = prev
+		tail.Next = cur
+
+		// 更新 pre 位置，准备下一轮反转
+		pre = tail
 	}
 
-	return final.Next
+	return dummy.Next
 }
 
 type ListNode struct {
